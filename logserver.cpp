@@ -1,10 +1,9 @@
-#include  "server.h"
+#include "server.h"
 #include "model.h"
 #include "fakelogclient.h"
+#include "gui.h"
 
 #include <QApplication>
-#include <QTableView>
-#include <QHeaderView>
 
 #include <QThread>
 
@@ -12,8 +11,6 @@ int main (int argc, char* argv[])
 {
     QApplication app(argc, argv);
     
-    QTableView view;
-
     Server server(nullptr);
     Model model(nullptr);
 
@@ -30,20 +27,18 @@ int main (int argc, char* argv[])
 
     model.connect (&server, &Server::newLine, &model, &Model::onNewLine);
   
-    view.setModel(&model);
+    Gui gui(&model);
+    gui.show();
 
     serverThr.start();
     modelThr.start();
     fakeLogThr.start();
 
-    view.show();
-    QHeaderView* header = view.horizontalHeader();
-    header->setStretchLastSection(true);
+    modelThr.connect(&app, &QApplication::aboutToQuit, &modelThr, &QThread::quit);
+    serverThr.connect(&app, &QApplication::aboutToQuit, &serverThr, &QThread::quit);
+    fakeLogThr.connect(&app, &QApplication::aboutToQuit, &fakeLogThr, &QThread::quit);
+    clientLog.connect(&fakeLogThr, &QThread::finished, &clientLog, &FakeLogClient::onStop);
 
-    app.connect (&view, &QTableView::destroyed, &app, &QApplication::quit);
-    modelThr.connect(&view, &QTableView::destroyed, &modelThr, &QThread::quit);
-    serverThr.connect(&view, &QTableView::destroyed, &serverThr, &QThread::quit);
-    fakeLogThr.connect(&view, &QTableView::destroyed, &fakeLogThr, &QThread::quit);
     app.exec();
 
     modelThr.wait();

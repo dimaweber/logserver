@@ -47,6 +47,11 @@ void FakeLogClient::onStart()
     timer->start(delay);
 }
 
+void FakeLogClient::onStop()
+{
+    timer->stop();
+}
+
 void FakeLogClient::onTimer()
 {
     if (index < lines.count())

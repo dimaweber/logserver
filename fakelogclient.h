@@ -19,6 +19,7 @@ public:
 
 public slots:
     void onStart();
+    void onStop();
     void onTimer();
 
 signals:
