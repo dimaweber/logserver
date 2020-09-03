@@ -34,31 +34,6 @@ void Server::onRead()
     }
 }
 
-std::ostream& operator<<(std::ostream& stream, const LogLine& line)
-{
-    auto output = [&stream](const char*name, const QString& value)
-    {
-#if MULTILINE_OUTPUT
-        stream <<  '\t' << std::setw(10) << std::left << name  << ':' << qPrintable(value) << std::endl;
-#else
-        Q_UNUSED(name);
-        stream <<  std::setw(10) <<  std::left << qPrintable(value);
-#endif
-    };
-    output("id", QString::number(line.id));
-    output("date", line.serverDateTime.toString("hh:mm:ss.zzz"));
-    output("host", line.hostName);
-    output("process",  line.processName);
-    //if (line.exLog)
-    {
-        output("filename", line.fileName);
-        output("linenum", QString::number(line.lineNum));
-        output("function", line.functionName);
-    }
-    output("message", line.message);
-    return stream;
-}
-
 LogLine Server::parseDatagramData(QByteArray data) const
 {
     QString str = QString::fromUtf8(data.constData());
@@ -72,6 +47,11 @@ LogLine Server::parseDatagramData(QByteArray data) const
         line.logDateTime = QDateTime::fromString(lineRegExp.cap(2).simplified(), "MMM d HH:mm:ss");
         line.hostName = lineRegExp.cap(3);
         line.processName = lineRegExp.cap(4);
+        if (line.processName.isEmpty())
+        {
+            line.processName = line.hostName;
+            line.hostName = "localhost";
+        }
         line.message = lineRegExp.cap(5);
 
         if (extendedLogging.indexIn(line.message) != -1)

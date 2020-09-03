@@ -1,7 +1,7 @@
-<14>Aug 26 11:00:37 cad: modemapi_nxp.cpp HardConfigNeeded: force
+<14>Aug 26 11:00:37 sw cad: modemapi_nxp.cpp HardConfigNeeded: force
 <14>Aug 26 11:00:37 cad: modemapi_nxp.cpp HardConfigNeeded: ATTR_RF_MODE
 <14>Aug 26 11:00:37 cad: modemapi_nxp.cpp HardConfigNeeded: ATTR_RF_MODE
-<14>Aug 26 11:00:37 modemd: modem.cpp main E_MODEM_HARD_CONFIG_SET_MSG
+<14>Aug 26 11:00:37 sw modemd: modem.cpp main E_MODEM_HARD_CONFIG_SET_MSG
 <14>Aug 26 11:00:37 cad: [modemapi_nxp.cpp:533 MoRfSet] sending null modulation to alarm_propagation
 <14>Aug 26 11:00:37 oamd: [cfm.cpp:1169 main] E_CFM_LOWEST_MODULATION_CHANGE modulation=0
 <14>Aug 26 11:00:37 oamd: [cfm.cpp:587 RelativeRate] modulation is 0
@@ -12,16 +12,16 @@
 <14>Aug 26 11:00:38 cad: [cfmapi.cpp:1729 CFMsetIP] set ip address : index 1 ip a467e2a
 <14>Aug 26 11:00:38 cad: [cfmapi.cpp:115 MsgSend] Sending E_CFM_LLDP_IP_CHANGE_MSG to queue id 31
 <14>Aug 26 11:00:38 oamd: [cfm.cpp:1306 main] notified ip address was changed: index 1 ip 172391978
-<14>Aug 26 11:00:38 oamd: [lldp.cpp:758 lldp_IP_change_notify] index = 1    ip = 42.126.70.10
+<14>Aug 26 11:00:38 sw oamd: [lldp.cpp:758 lldp_IP_change_notify] index = 1    ip = 42.126.70.10
 <14>Aug 26 11:00:38 oamd: [lldp.cpp:760 lldp_IP_change_notify] index = 1 ip = 42.126.70.10
-<14>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth0 index=1 42.126.70.10 recalc:1
-<14>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth1 index=1 42.126.70.10 recalc:1
-<14>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth2 index=1 42.126.70.10 recalc:1
+<15>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth0 index=1 42.126.70.10 recalc:1
+<15>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth1 index=1 42.126.70.10 recalc:1
+<15>Aug 26 11:00:38 oamd: [lldp.cpp:806 lldp_IP_change_notify] port=eth2 index=1 42.126.70.10 recalc:1
 <14>Aug 26 11:00:38 oamd: [lldp.cpp:401 charge_zombie_packet] for port eth0
 <14>Aug 26 11:00:38 oamd: [lldp_glue.cpp:83 lldp_g_sched_tx] lldp scheduling channel : 23 0 0
-<14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:737 main] processing message E_CTRL_TX_SESSION_ENABLE_MSG
-<14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:519 setSessionEnabled] index=23 enabled=0 immidiate=0
-<14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:1261 removeSession] session idx 23 queue 0
+<13>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:737 main] processing message E_CTRL_TX_SESSION_ENABLE_MSG
+<13>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:519 setSessionEnabled] index=23 enabled=0 immidiate=0
+<13>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:1261 removeSession] session idx 23 queue 0
 <14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:499 setEnabled] Enable TX for session 23
 <14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:1410 closeSocket] Close socket for interface host
 <14>Aug 26 11:00:38 ctrl_txd: [control_tx.cpp:513 setEnabled] Disabled Tx on index 23

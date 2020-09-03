@@ -31,7 +31,7 @@ int Model::columnCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
         return 0;
-    return 8;
+    return LogLine::LAST;
 }
 
 QVariant Model::data(const QModelIndex& index, int role) const
@@ -46,14 +46,15 @@ QVariant Model::data(const QModelIndex& index, int role) const
             LogLine* ptr = lines.at(index.row());
             switch(index.column())
             {
-                 case 0: return ptr->id;
-                 case 1: return ptr->serverDateTime;
-                 case 2: return ptr->processName;
-                 case 3: return ptr->hostName;
-                 case 4: return ptr->fileName;
-                 case 5: return ptr->lineNum;
-                 case 6: return ptr->functionName;
-                 case 7: return ptr->message;
+                 case LogLine::Priority: return ptr->id;
+                 case LogLine::ServerTimestamp: return ptr->serverDateTime;
+                 case LogLine::LogTimestamp: return ptr->logDateTime;
+                 case LogLine::ProcessName: return ptr->processName;
+                 case LogLine::HostName: return ptr->hostName;
+                 case LogLine::FileName: return ptr->fileName;
+                 case LogLine::LineNum: return ptr->lineNum;
+                 case LogLine::FunctionName: return ptr->functionName;
+                 case LogLine::Message: return ptr->message;
             }
         }
         default:     
@@ -69,14 +70,16 @@ QVariant Model::headerData(int section, Qt::Orientation orientation,  int role) 
         {
             switch(section)
             {
-                case 0: return "Priority";
-                case 1: return "Timestamp";
-                case 2: return "process";
-                case 3: return "host";
-                case 4: return "file";
-                case 5: return "line";
-                case 6: return "function";
-                case 7: return "message";
+                case LogLine::Priority: return "Priority";
+                case LogLine::ServerTimestamp:
+                case LogLine::LogTimestamp:
+                    return "Timestamp";
+                case LogLine::ProcessName: return "process";
+                case LogLine::HostName: return "host";
+                case LogLine::FileName: return "file";
+                case LogLine::LineNum: return "line";
+                case LogLine::FunctionName: return "function";
+                case LogLine::Message: return "message";
             }
         }
         else

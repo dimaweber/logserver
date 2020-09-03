@@ -2,6 +2,8 @@
 #define MODEL_H
 
 #include "server.h"
+#include "logline.h"
+
 #include <QAbstractTableModel>
 #include <QList>
 
