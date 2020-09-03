@@ -26,11 +26,8 @@ void Server::onRead()
 {
     while (pSocket->hasPendingDatagrams())
     {
-//            qDebug() << "new datagram arrive";
         QNetworkDatagram dgram = pSocket->receiveDatagram();
             
-//            qDebug() << QString::fromLatin1(dgram.data().constData());
-
         LogLine* line = new LogLine(parseDatagramData(dgram.data()));
               
         emit newLine(line);

@@ -7,7 +7,7 @@ Model::Model(QObject* parent)
 
 void Model::onNewLine(LogLine* pLine)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount()+1);
+    beginInsertRows(QModelIndex(), rowCount(), rowCount());
     std::cout << *pLine << std::endl;
     lines.append(pLine);
     endInsertRows();
@@ -63,22 +63,26 @@ QVariant Model::data(const QModelIndex& index, int role) const
 
 QVariant Model::headerData(int section, Qt::Orientation orientation,  int role) const
 {
-    if (orientation == Qt::Horizontal)
+    if (role == Qt::DisplayRole)
     {
-        switch(section)
+        if (orientation == Qt::Horizontal)
+        {
+            switch(section)
             {
-            case 0: return "Priority";
-            case 1: return "Timestamp";
-            case 2: return "process";
-            case 3: return "host";
-            case 4: return "file";
-            case 5: return "line";
-            case 6: return "function";
-            case 7: return "message";
+                case 0: return "Priority";
+                case 1: return "Timestamp";
+                case 2: return "process";
+                case 3: return "host";
+                case 4: return "file";
+                case 5: return "line";
+                case 6: return "function";
+                case 7: return "message";
+            }
         }
-        return QVariant();
+        else
+            return section+1;
     }
-    else
-        return section;
+
+    return QVariant();
 }
 
