@@ -12,7 +12,7 @@ void FilterModel::addFilter(LogLine::Fields field, QVariant filterValue)
     if (LogLine::isFilterable(field))
         filterSet[field] = filterValue;
     else
-        qDebug() << "field " << field << " cannot be filtered";
+        qWarning() << "field " << field << " cannot be filtered";
 }
 
 void FilterModel::resetFilter()

@@ -74,6 +74,6 @@ QVariant Model::headerData(int section, Qt::Orientation orientation,  int role) 
             return section+1;
     }
 
-    return QVariant();
+    return QAbstractTableModel::headerData(section, orientation, role);
 }
 

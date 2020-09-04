@@ -8,6 +8,7 @@
 
 Server::Server(QObject* parent):QObject(parent), pSocket(nullptr)
 {
+    logLocale = new QLocale(QLocale::English, QLocale::UnitedStates);
     pSocket = new QUdpSocket(this);
 
     if (!pSocket->bind(serverPort))
@@ -44,7 +45,7 @@ LogLine Server::parseDatagramData(QByteArray data) const
     if (lineRegExp.indexIn(str) != -1)
     {
         line.priority = lineRegExp.cap(1).toInt();
-        line.logDateTime = QDateTime::fromString(lineRegExp.cap(2).simplified(), "MMM d HH:mm:ss");
+        line.logDateTime = logLocale->toDateTime(lineRegExp.cap(2).simplified(), "MMM d HH:mm:ss");
         line.hostName = lineRegExp.cap(3);
         line.processName = lineRegExp.cap(4);
         if (line.processName.isEmpty())

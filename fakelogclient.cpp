@@ -34,11 +34,6 @@ void FakeLogClient::onStart()
         qDebug() << "fake server bind ok";
     else
         qWarning() << "fake server fail to bind";
-/*    if (pSocket->open(QUdpSocket::WriteOnly))
-        qDebug() << "fake server socket open ok";
-    else
-        qWarning() << "fake server socket open fail";
-*/
 
     timer = new QTimer(this);
     connect (timer, &QTimer::timeout, this, &FakeLogClient::onTimer);

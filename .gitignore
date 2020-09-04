@@ -1,0 +1,9 @@
+
+.qmake.stash
+logserver.pro.user
+Makefile
+Makefile.Debug
+Makefile.Release
+
+debug/*
+object_script.*
