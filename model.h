@@ -5,7 +5,7 @@
 #include "logline.h"
 
 #include <QAbstractTableModel>
-#include <QList>
+#include <QVector>
 #include <QSet>
 #include <QPair>
 
@@ -13,7 +13,7 @@ class Model: public QAbstractTableModel
 {
     Q_OBJECT
 private:
-    QList<LogLine*> lines;
+    QVector<LogLine*> lines;
 public: 
     Model(QObject* parent = nullptr);
     ~Model();

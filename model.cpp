@@ -8,6 +8,7 @@ Model::Model(QObject* parent)
 void Model::onNewLine(LogLine* pLine)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
+
     std::cout << *pLine << std::endl;
     lines.append(pLine);
 

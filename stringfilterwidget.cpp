@@ -23,4 +23,6 @@ StringFilterWidget::StringFilterWidget(LogLine::Fields field, QSet<QString> valu
         l->addWidget( new QCheckBox(v, this));
     l->addWidget(pRegExpRadio);
     l->addWidget(pRegExpEdit);
+
+    setWindowTitle(LogLine::fieldName(field));
 }
