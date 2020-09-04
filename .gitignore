@@ -7,3 +7,4 @@ Makefile.Release
 
 debug/*
 object_script.*
+usersweberappdata*
