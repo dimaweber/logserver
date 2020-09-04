@@ -28,29 +28,53 @@ void FilterModel::resetFilter()
     invalidateFilter();
 }
 
+void FilterModel::hideRow(QModelIndex index)
+{
+    hiddenRows.append(index.row());
+    invalidateFilter();
+}
+
+void FilterModel::hideRowsWithText(const QString &text)
+{
+    hiddenMessages.append(text);
+    invalidateFilter();
+}
+
 bool FilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     bool retVal = true;
+
+    if (!hiddenRows.isEmpty() && hiddenRows.contains(source_row))
+        return false;
+
+    if (!hiddenMessages.isEmpty())
+    {
+        QModelIndex messageIndex = sourceModel()->index(source_row, LogLine::Message, source_parent);
+        if (hiddenMessages.contains(sourceModel()->data(messageIndex).toString()))
+            return false;
+    }
+
     foreach (LogLine::Fields field, filterSet.keys())
     {
         QModelIndex index = sourceModel()->index(source_row, field, source_parent);
         const QVariant& var = filterSet[field];
         QVariant::Type type = var.type();
+        const QString& fieldValue = sourceModel()->data(index).toString();
         switch (type)
         {
             case QVariant::RegExp:
-                retVal &= var.toRegExp().indexIn(sourceModel()->data(index).toString()) != -1;
+                retVal &= var.toRegExp().indexIn(fieldValue) != -1;
                 break;
             case QVariant::String:
             case QVariant::Int:
-                retVal &= sourceModel()->data(index).toString().contains(var.toString());
+                retVal &= fieldValue.contains(var.toString());
                 break;
             case QVariant::StringList:
                 {
                     bool inList = false;
                     foreach(const QString& varElem, var.toStringList())
                     {
-                        inList |= sourceModel()->data(index).toString().contains(varElem);
+                        inList |= fieldValue.contains(varElem);
                         if (inList)
                             break;
                     }

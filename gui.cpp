@@ -1,6 +1,6 @@
 #include "gui.h"
 #include "filtermodel.h"
-#include "stringfilterwidget.h"
+#include "setfilterwidget.h"
 #include "model.h"
 
 #include <QTableView>
@@ -8,6 +8,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QMenu>
 
 Gui::Gui(Model* pModel, QWidget *parent)
     : QMainWindow(parent), pTableView(nullptr), pModel(pModel), pProxyModel(new FilterModel(this))
@@ -19,23 +20,45 @@ Gui::Gui(Model* pModel, QWidget *parent)
     pProxyModel->setSourceModel(pModel);
     pTableView->setModel(pProxyModel);
     pTableView->setHorizontalHeader(pHeader);
+    pTableView->setContextMenuPolicy(Qt::CustomContextMenu);
     pHeader->setStretchLastSection(true);
     pHeader->setSectionResizeMode(QHeaderView::ResizeToContents);
+    pHeader->setContextMenuPolicy(Qt::NoContextMenu);
     setCentralWidget(pTableView);
-
-    connect (pHeader, &HorizontalHeader::showFilter, this, &Gui::onShowFilter);
 
     for (int i=0; i<LogLine::Fields::LAST; i++)
     {
         LogLine::Fields field = static_cast<LogLine::Fields>(i);
-        if (LogLine::isFilterable(field))
-        {
-            StringFilterWidget* pFilterWidget = new StringFilterWidget(field, pModel->possibleValues[field], this);
-            filterWidgets[field] = pFilterWidget;
+        QMenu *menu=new QMenu(this);
+        menu->addAction("Hide this line", this, &Gui::hideLine);
 
-            connect (pFilterWidget, &StringFilterWidget::filterSetAll, pProxyModel, &FilterModel::removeFilter);
-            connect (pFilterWidget, &StringFilterWidget::filterSetSelection, pProxyModel, &FilterModel::addFilter);
-            connect (pFilterWidget, &StringFilterWidget::filterSetRegExp, pProxyModel, &FilterModel::addFilter);
+        if (field == LogLine::Fields::Message)
+        {
+            menu->addAction("Hide all lines with same message", this, &Gui::hideSameLines);
+            menu->addAction(new QAction("Copy message to clipboard", this));
+        }
+        contextMenuForFields[field] = menu;
+    }
+
+    connect (pHeader, &HorizontalHeader::showFilter, this, &Gui::onShowFilter);
+    connect (pTableView, &QTableView::customContextMenuRequested, this, &Gui::contextMenuRequested);
+
+    for (int i=0; i<LogLine::Fields::LAST; i++)
+    {
+        LogLine::Fields field = static_cast<LogLine::Fields>(i);
+        if (LogLine::isSetFilter(field))
+        {
+            SetFilterWidget* pFilterWidget = new SetFilterWidget(field, pModel->possibleValues[field], this);
+            setFilterWidgets[field] = pFilterWidget;
+
+            connect (pFilterWidget, &SetFilterWidget::filterSetAll, pProxyModel, &FilterModel::removeFilter);
+            connect (pFilterWidget, &SetFilterWidget::filterSetSelection, pProxyModel, &FilterModel::addFilter);
+            connect (pFilterWidget, &SetFilterWidget::filterSetRegExp, pProxyModel, &FilterModel::addFilter);
+        }
+        if (LogLine::isMinMaxFilter(field))
+        {
+            QWidget* pFilterWidget = new QWidget(this);
+            minmaxFilterWidgets[field] = pFilterWidget;
         }
     }
 
@@ -44,14 +67,40 @@ Gui::Gui(Model* pModel, QWidget *parent)
 
 void Gui::onShowFilter(LogLine::Fields field)
 {
-    if (!LogLine::isFilterable(field))
-        return;
-    filterWidgets[field]->show();
+    if (LogLine::isSetFilter(field))
+        setFilterWidgets[field]->show();
+    if (LogLine::isMinMaxFilter(field))
+        minmaxFilterWidgets[field]->show();
+
 }
 
 void Gui::onNewFilterValue(LogLine::Fields field, const QString &value)
 {
-    filterWidgets[field]->addPossbleValue(value);
+    setFilterWidgets[field]->addPossbleValue(value);
+}
+
+void Gui::contextMenuRequested(QPoint pos)
+{
+    QModelIndex index=pTableView->indexAt(pos);
+
+    QMenu *menu=contextMenuForFields[static_cast<LogLine::Fields>(index.column())];
+    if (menu)
+        menu->popup(pTableView->viewport()->mapToGlobal(pos));
+}
+
+void Gui::hideLine()
+{
+    QModelIndex idx = pTableView->currentIndex();
+    QModelIndex modelIdx = pProxyModel->mapToSource(idx);
+    qDebug() << "hide row " << modelIdx.row();
+    pProxyModel->hideRow(modelIdx);
+}
+
+void Gui::hideSameLines()
+{
+    QString text = pProxyModel->data(pTableView->currentIndex()).toString();
+    qDebug() << "hide rows " << text;
+    pProxyModel->hideRowsWithText(text);
 }
 
 HorizontalHeader::HorizontalHeader(QWidget *parent)

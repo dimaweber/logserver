@@ -7,7 +7,7 @@ SOURCES += logserver.cpp \
            logline.cpp \
            server.cpp \
            model.cpp \
-           stringfilterwidget.cpp
+           setfilterwidget.cpp
 
 HEADERS += server.h \
             fakelogclient.h \
@@ -15,7 +15,7 @@ HEADERS += server.h \
             gui.h \
             logline.h \
             model.h \
-            stringfilterwidget.h
+            setfilterwidget.h
 CONFIG += debug c++11
 
 DISTFILES += \

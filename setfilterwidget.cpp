@@ -1,4 +1,4 @@
-#include "stringfilterwidget.h"
+#include "setfilterwidget.h"
 #include <QBoxLayout>
 #include <QRadioButton>
 #include <QCheckBox>
@@ -6,7 +6,7 @@
 #include <QSet>
 #include <QRegExp>
 
-StringFilterWidget::StringFilterWidget(LogLine::Fields f, QSet<QString> values, QWidget *parent)
+SetFilterWidget::SetFilterWidget(LogLine::Fields f, QSet<QString> values, QWidget *parent)
     : QWidget(parent, Qt::Window), field(f)
 {
     setWindowTitle(LogLine::fieldName(field));
@@ -79,7 +79,7 @@ StringFilterWidget::StringFilterWidget(LogLine::Fields f, QSet<QString> values, 
     pAllRadio->setChecked(true);
 }
 
-void StringFilterWidget::addPossbleValue(const QString &value)
+void SetFilterWidget::addPossbleValue(const QString &value)
 {
     auto pCheckBox = new QCheckBox(value, pValuesWidget);
     pValuesWidget->layout()->addWidget( pCheckBox);

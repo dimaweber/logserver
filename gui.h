@@ -10,7 +10,8 @@
 class Model;
 class QTableView;
 class FilterModel;
-class StringFilterWidget;
+class SetFilterWidget;
+class QMenu;
 
 class HorizontalHeader : public QHeaderView
 {
@@ -33,14 +34,18 @@ class Gui : public QMainWindow
     Model* pModel;
     FilterModel* pProxyModel;
 
-    QMap<LogLine::Fields, StringFilterWidget*> filterWidgets;
-
+    QMap<LogLine::Fields, SetFilterWidget*> setFilterWidgets;
+    QMap<LogLine::Fields, QWidget*> minmaxFilterWidgets;
+    QMap<LogLine::Fields, QMenu*> contextMenuForFields;
 public:
     explicit Gui(Model* pModel, QWidget *parent = nullptr);
 
 public slots:
     void onShowFilter (LogLine::Fields field);
     void onNewFilterValue(LogLine::Fields field, const QString& value);
+    void contextMenuRequested(QPoint);
+    void hideLine();
+    void hideSameLines();
 
 signals:
 
