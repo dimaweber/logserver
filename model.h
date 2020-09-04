@@ -28,6 +28,9 @@ public:
 
 public slots:
     void onNewLine(LogLine* line);
+
+signals:
+    void newFilterValue(LogLine::Fields field, const QString& value);
 };
 
 #endif

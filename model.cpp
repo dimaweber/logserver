@@ -12,21 +12,32 @@ void Model::onNewLine(LogLine* pLine)
     std::cout << *pLine << std::endl;
     lines.append(pLine);
 
-    possibleValues[LogLine::Priority].insert(QString::number(pLine->priority));
-    possibleValues[LogLine::ProcessName].insert(pLine->processName);
-    possibleValues[LogLine::HostName].insert(pLine->hostName);
+    pLine->forEachField([this](LogLine::Fields field, const QVariant& value)
+    {
+        if (LogLine::isSetFilter(field))
+        {
+            if (!possibleValues[field].contains(value.toString()))
+            {
+                possibleValues[field].insert(value.toString());
+                emit newFilterValue(field, value.toString());
+            }
+        }
 
-    timestampRanges[LogLine::ServerTimestamp].first = qMin(timestampRanges[LogLine::ServerTimestamp].first, pLine->serverDateTime);
-    timestampRanges[LogLine::ServerTimestamp].second = qMax(timestampRanges[LogLine::ServerTimestamp].first, pLine->serverDateTime);
-    timestampRanges[LogLine::LogTimestamp].first = qMin(timestampRanges[LogLine::LogTimestamp].first, pLine->logDateTime);
-    timestampRanges[LogLine::LogTimestamp].second = qMax(timestampRanges[LogLine::LogTimestamp].first, pLine->logDateTime);
+        if (LogLine::isMinMaxFilter(field))
+        {
+            timestampRanges[field].first = timestampRanges[field].first.isValid()?
+                        qMin(timestampRanges[field].first, value.toDateTime())
+                      : value.toDateTime();
+            timestampRanges[field].second = qMax(timestampRanges[field].first, value.toDateTime());
+        }
+    });
 
     endInsertRows();
 }
 
 Model::~Model()
 {
-    for(LogLine* p: lines)
+    foreach(LogLine* p, lines)
         delete p;
 }
 
@@ -54,7 +65,7 @@ QVariant Model::data(const QModelIndex& index, int role) const
     {
         case Qt::DisplayRole: 
         {
-            LogLine* ptr = lines.at(index.row());
+            LogLine* ptr = lines[index.row()];
             return ptr->fieldValue(static_cast<LogLine::Fields>(index.column()));
         }
         default:     

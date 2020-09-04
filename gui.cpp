@@ -23,18 +23,35 @@ Gui::Gui(Model* pModel, QWidget *parent)
     pHeader->setSectionResizeMode(QHeaderView::ResizeToContents);
     setCentralWidget(pTableView);
 
-    pProxyModel->addFilter(LogLine::ProcessName, "oamd");
-    pProxyModel->addFilter(LogLine::Priority, 15);
-
     connect (pHeader, &HorizontalHeader::showFilter, this, &Gui::onShowFilter);
+
+    for (int i=0; i<LogLine::Fields::LAST; i++)
+    {
+        LogLine::Fields field = static_cast<LogLine::Fields>(i);
+        if (LogLine::isFilterable(field))
+        {
+            StringFilterWidget* pFilterWidget = new StringFilterWidget(field, pModel->possibleValues[field], this);
+            filterWidgets[field] = pFilterWidget;
+
+            connect (pFilterWidget, &StringFilterWidget::filterSetAll, pProxyModel, &FilterModel::removeFilter);
+            connect (pFilterWidget, &StringFilterWidget::filterSetSelection, pProxyModel, &FilterModel::addFilter);
+            connect (pFilterWidget, &StringFilterWidget::filterSetRegExp, pProxyModel, &FilterModel::addFilter);
+        }
+    }
+
+    connect (pModel, &Model::newFilterValue, this, &Gui::onNewFilterValue, Qt::QueuedConnection);
 }
 
 void Gui::onShowFilter(LogLine::Fields field)
 {
     if (!LogLine::isFilterable(field))
         return;
-    StringFilterWidget* widget = new StringFilterWidget(field, pModel->possibleValues[field], this);
-    widget->show();
+    filterWidgets[field]->show();
+}
+
+void Gui::onNewFilterValue(LogLine::Fields field, const QString &value)
+{
+    filterWidgets[field]->addPossbleValue(value);
 }
 
 HorizontalHeader::HorizontalHeader(QWidget *parent)

@@ -14,6 +14,7 @@ public:
 
 public slots:
     void addFilter(LogLine::Fields field, QVariant filterValue);
+    void removeFilter(LogLine::Fields field);
     void resetFilter();
 
 protected:

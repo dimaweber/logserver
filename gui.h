@@ -5,11 +5,12 @@
 
 #include <QMainWindow>
 #include <QHeaderView>
+#include <QMap>
 
 class Model;
 class QTableView;
 class FilterModel;
-
+class StringFilterWidget;
 
 class HorizontalHeader : public QHeaderView
 {
@@ -31,11 +32,15 @@ class Gui : public QMainWindow
     HorizontalHeader* pHeader;
     Model* pModel;
     FilterModel* pProxyModel;
+
+    QMap<LogLine::Fields, StringFilterWidget*> filterWidgets;
+
 public:
     explicit Gui(Model* pModel, QWidget *parent = nullptr);
 
 public slots:
     void onShowFilter (LogLine::Fields field);
+    void onNewFilterValue(LogLine::Fields field, const QString& value);
 
 signals:
 
