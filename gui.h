@@ -1,19 +1,41 @@
 #ifndef GUI_H
 #define GUI_H
 
+#include "logline.h"
+
 #include <QMainWindow>
-class QAbstractTableModel;
+#include <QHeaderView>
+
+class Model;
 class QTableView;
 class FilterModel;
+
+
+class HorizontalHeader : public QHeaderView
+{
+    Q_OBJECT
+public:
+    HorizontalHeader(QWidget* parent = nullptr);
+
+protected:
+    void mousePressEvent(QMouseEvent *e) override;
+
+signals:
+    void showFilter(LogLine::Fields);
+};
 
 class Gui : public QMainWindow
 {
     Q_OBJECT
     QTableView* pTableView;
-    QAbstractTableModel* pModel;
+    HorizontalHeader* pHeader;
+    Model* pModel;
     FilterModel* pProxyModel;
 public:
-    explicit Gui(QAbstractTableModel* pModel, QWidget *parent = nullptr);
+    explicit Gui(Model* pModel, QWidget *parent = nullptr);
+
+public slots:
+    void onShowFilter (LogLine::Fields field);
 
 signals:
 

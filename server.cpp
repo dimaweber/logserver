@@ -43,7 +43,7 @@ LogLine Server::parseDatagramData(QByteArray data) const
 
     if (lineRegExp.indexIn(str) != -1)
     {
-        line.id = lineRegExp.cap(1).toInt();
+        line.priority = lineRegExp.cap(1).toInt();
         line.logDateTime = QDateTime::fromString(lineRegExp.cap(2).simplified(), "MMM d HH:mm:ss");
         line.hostName = lineRegExp.cap(3);
         line.processName = lineRegExp.cap(4);

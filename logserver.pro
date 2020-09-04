@@ -6,14 +6,16 @@ SOURCES += logserver.cpp \
            gui.cpp \
            logline.cpp \
            server.cpp \
-           model.cpp
+           model.cpp \
+           stringfilterwidget.cpp
 
 HEADERS += server.h \
             fakelogclient.h \
             filtermodel.h \
             gui.h \
             logline.h \
-            model.h
+            model.h \
+            stringfilterwidget.h
 CONFIG += debug c++11
 
 DISTFILES += \

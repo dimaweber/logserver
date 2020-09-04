@@ -10,6 +10,16 @@ void Model::onNewLine(LogLine* pLine)
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     std::cout << *pLine << std::endl;
     lines.append(pLine);
+
+    possibleValues[LogLine::Priority].insert(QString::number(pLine->priority));
+    possibleValues[LogLine::ProcessName].insert(pLine->processName);
+    possibleValues[LogLine::HostName].insert(pLine->hostName);
+
+    timestampRanges[LogLine::ServerTimestamp].first = qMin(timestampRanges[LogLine::ServerTimestamp].first, pLine->serverDateTime);
+    timestampRanges[LogLine::ServerTimestamp].second = qMax(timestampRanges[LogLine::ServerTimestamp].first, pLine->serverDateTime);
+    timestampRanges[LogLine::LogTimestamp].first = qMin(timestampRanges[LogLine::LogTimestamp].first, pLine->logDateTime);
+    timestampRanges[LogLine::LogTimestamp].second = qMax(timestampRanges[LogLine::LogTimestamp].first, pLine->logDateTime);
+
     endInsertRows();
 }
 
@@ -44,18 +54,7 @@ QVariant Model::data(const QModelIndex& index, int role) const
         case Qt::DisplayRole: 
         {
             LogLine* ptr = lines.at(index.row());
-            switch(index.column())
-            {
-                 case LogLine::Priority: return ptr->id;
-                 case LogLine::ServerTimestamp: return ptr->serverDateTime;
-                 case LogLine::LogTimestamp: return ptr->logDateTime;
-                 case LogLine::ProcessName: return ptr->processName;
-                 case LogLine::HostName: return ptr->hostName;
-                 case LogLine::FileName: return ptr->fileName;
-                 case LogLine::LineNum: return ptr->lineNum;
-                 case LogLine::FunctionName: return ptr->functionName;
-                 case LogLine::Message: return ptr->message;
-            }
+            return ptr->fieldValue(static_cast<LogLine::Fields>(index.column()));
         }
         default:     
             return QVariant();
@@ -68,19 +67,7 @@ QVariant Model::headerData(int section, Qt::Orientation orientation,  int role) 
     {
         if (orientation == Qt::Horizontal)
         {
-            switch(section)
-            {
-                case LogLine::Priority: return "Priority";
-                case LogLine::ServerTimestamp:
-                case LogLine::LogTimestamp:
-                    return "Timestamp";
-                case LogLine::ProcessName: return "process";
-                case LogLine::HostName: return "host";
-                case LogLine::FileName: return "file";
-                case LogLine::LineNum: return "line";
-                case LogLine::FunctionName: return "function";
-                case LogLine::Message: return "message";
-            }
+            return LogLine::fieldName(static_cast<LogLine::Fields>(section));
         }
         else
             return section+1;

@@ -1,4 +1,5 @@
 #include "filtermodel.h"
+#include <QDebug>
 
 FilterModel::FilterModel(QObject* parent)
     :QSortFilterProxyModel(parent)
@@ -8,7 +9,10 @@ FilterModel::FilterModel(QObject* parent)
 
 void FilterModel::addFilter(LogLine::Fields field, QVariant filterValue)
 {
-    filterSet[field] = filterValue;
+    if (LogLine::isFilterable(field))
+        filterSet[field] = filterValue;
+    else
+        qDebug() << "field " << field << " cannot be filtered";
 }
 
 void FilterModel::resetFilter()
@@ -19,11 +23,11 @@ void FilterModel::resetFilter()
 bool FilterModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
 {
     bool retVal = true;
-    for (LogLine::Fields f: filterSet.keys())
+    for (LogLine::Fields field: filterSet.keys())
     {
-        QModelIndex index = sourceModel()->index(source_row, f, source_parent);
+        QModelIndex index = sourceModel()->index(source_row, field, source_parent);
 
-        retVal &= sourceModel()->data(index).toString().contains(filterSet[f].toString());
+        retVal &= sourceModel()->data(index).toString().contains(filterSet[field].toString());
         if (!retVal)
             break;
     }
